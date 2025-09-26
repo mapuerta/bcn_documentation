@@ -52,6 +52,16 @@ h1 {
   display: none;
 }
 
+.section .repos-container {
+  display: none;
+  margin-left: 20px;
+}
+
+.section.open .repos-container {
+  display: block;
+}
+
+
 .module {
   background: white;
   margin-bottom: 12px;

@@ -1,108 +1,117 @@
 const sectionsContainer = document.getElementById("sections");
-const config = window.CONFIG;
+const searchInput = document.getElementById("searchInput");
+
 // Caché de README
-const readmeCache = new Map();
+const readmeCache = {};
 
-// Función para renderizar las secciones
+// Guardar los datos originales para filtrar
+let allData = {};
+
+// Inicializar la carga de secciones
+async function loadSections() {
+  try {
+    const res = await fetch(CONFIG.API_BASE_URL + "/repos");
+    if (!res.ok) throw new Error("Error al obtener repositorios");
+    allData = await res.json();
+
+    renderSections(allData);
+  } catch (err) {
+    console.error("Error cargando secciones:", err);
+  }
+}
+
+// Función para renderizar secciones según un dataset
 function renderSections(data) {
-  sectionsContainer.innerHTML = ""; // limpiar
+  sectionsContainer.innerHTML = "";
 
-  for (const [sectionKey, repos] of Object.entries(data)) {
-    const sectionName = config.SECTION_NAMES[sectionKey] || sectionKey;
-
+  for (const [sectionCode, repos] of Object.entries(data)) {
     const sectionEl = document.createElement("div");
     sectionEl.classList.add("section");
 
-    // Título de la sección plegable
-    const title = document.createElement("h2");
-    title.textContent = sectionName;
-    title.classList.add("section-title");
-    sectionEl.appendChild(title);
+    const sectionTitle = document.createElement("h2");
+    sectionTitle.textContent = CONFIG.SECTION_NAMES[sectionCode] || sectionCode;
+    sectionTitle.classList.add("section-title");
+    sectionTitle.onclick = () => sectionEl.classList.toggle("open");
+    sectionEl.appendChild(sectionTitle);
 
-    // Contenedor de repositorios, oculto por defecto
     const reposContainer = document.createElement("div");
     reposContainer.classList.add("repos-container");
-    reposContainer.style.display = "none";
-    sectionEl.appendChild(reposContainer);
 
-    // Toggle al hacer click en el título
-    title.addEventListener("click", () => {
-      reposContainer.style.display =
-        reposContainer.style.display === "none" ? "block" : "none";
-    });
-
-    // Renderizar repositorios por sección
     repos.forEach(repo => {
       const repoEl = document.createElement("div");
       repoEl.classList.add("repo");
 
       const repoTitle = document.createElement("h3");
-      repoTitle.textContent = `${repo.name} [${repo.branch}]`;
+      repoTitle.textContent = repo.name;
       repoTitle.classList.add("repo-title");
+      repoEl.appendChild(repoTitle);
 
-      // Contenedor del README, oculto por defecto
+      const branchesList = document.createElement("ul");
+      branchesList.classList.add("branches-list");
+
+      const branchItem = document.createElement("li");
+      const branchBtn = document.createElement("button");
+      branchBtn.textContent = repo.branch;
+      branchBtn.classList.add("branch-btn");
+
       const readmeEl = document.createElement("div");
       readmeEl.classList.add("readme");
-      readmeEl.style.display = "none";
 
-      repoTitle.addEventListener("click", () => toggleReadme(repo.name, repo.branch, readmeEl));
+      branchBtn.onclick = () => toggleReadme(repo.name, repo.branch, readmeEl);
 
-      repoEl.appendChild(repoTitle);
-      repoEl.appendChild(readmeEl);
+      branchItem.appendChild(branchBtn);
+      branchItem.appendChild(readmeEl);
+      branchesList.appendChild(branchItem);
+
+      repoEl.appendChild(branchesList);
       reposContainer.appendChild(repoEl);
     });
 
+    sectionEl.appendChild(reposContainer);
     sectionsContainer.appendChild(sectionEl);
   }
 }
 
-// Función para cargar README
+// Función para mostrar/ocultar README
 async function toggleReadme(repoName, branch, container) {
   if (container.style.display === "block") {
     container.style.display = "none";
     return;
   }
 
-  const cacheKey = `${repoName}@${branch}`;
-  if (readmeCache.has(cacheKey)) {
-    container.innerHTML = readmeCache.get(cacheKey);
+  const cacheKey = `${repoName}:${branch}`;
+  if (readmeCache[cacheKey]) {
+    container.innerHTML = readmeCache[cacheKey];
     container.style.display = "block";
     return;
   }
 
   try {
-    const res = await fetch(`${config.API_BASE_URL}/repos/${repoName}/readme?branch=${branch}`);
-    if (!res.ok) {
-      container.innerHTML = "<p>Error al cargar README</p>";
-      container.style.display = "block";
-      return;
-    }
+    const res = await fetch(`${CONFIG.API_BASE_URL}/repos/${repoName}/readme?branch=${branch}`);
+    if (!res.ok) throw new Error("Error al cargar README");
 
     const html = await res.text();
-    readmeCache.set(cacheKey, html);
+    readmeCache[cacheKey] = html;
     container.innerHTML = html;
     container.style.display = "block";
   } catch (err) {
-    container.innerHTML = `<p>Error al cargar README: ${err.message}</p>`;
+    container.innerHTML = "<p>Error al cargar README</p>";
     container.style.display = "block";
   }
 }
 
-// Inicializar
-async function loadSections() {
-  try {
-      debugger
-    const res = await fetch(`${config.API_BASE_URL}/repos`);
-    if (!res.ok) {
-      sectionsContainer.innerHTML = "<p>Error cargando secciones</p>";
-      return;
-    }
-    const data = await res.json();
-    renderSections(data);
-  } catch (err) {
-    sectionsContainer.innerHTML = `<p>Error: ${err.message}</p>`;
-  }
-}
+// Filtrar por búsqueda
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.toLowerCase();
+  const filteredData = {};
 
-// Ejecutar
+  for (const [section, repos] of Object.entries(allData)) {
+    const filteredRepos = repos.filter(repo => repo.name.toLowerCase().includes(query));
+    if (filteredRepos.length > 0) filteredData[section] = filteredRepos;
+  }
+
+  renderSections(filteredData);
+});
+
+// Inicializar
 loadSections();
