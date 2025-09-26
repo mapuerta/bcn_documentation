@@ -1,0 +1,98 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f7fc;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  color: #004aad;
+  margin-bottom: 20px;
+}
+
+.search-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#searchInput {
+  width: 50%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.section {
+  margin-bottom: 15px;
+}
+
+.section-title {
+  background: #004aad;
+  color: white;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.section-title:hover {
+  background: #0066ff;
+}
+
+.section-content {
+  margin-left: 15px;
+  padding: 10px;
+  border-left: 3px solid #004aad;
+  display: none;
+}
+
+.module {
+  background: white;
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.module h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #004aad;
+}
+
+.module button {
+  margin: 5px;
+  padding: 8px 12px;
+  background: #004aad;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.module button:hover {
+  background: #0066ff;
+}
+
+.readme {
+  display: none;
+  margin-top: 10px;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.readme.show {
+  display: block;
+}
