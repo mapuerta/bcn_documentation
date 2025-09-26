@@ -7,7 +7,7 @@
 
 window.CONFIG = {
   // URL base de la API que sirve los repos y readmes
-  API_BASE_URL: "http://10.150.182.238:3000",
+  API_BASE_URL: "https://liquid-geometry-devices-rows.trycloudflare.com",
 
   // Opcional: secciones amigables para mostrar en la UI
   SECTION_NAMES: {
