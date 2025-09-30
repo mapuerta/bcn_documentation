@@ -4,6 +4,12 @@ body {
   margin: 0;
   padding: 20px;
   color: #333;
+  background-image: url('image/background.png');
+}
+
+#btnClear {
+  padding: 6px 12px;
+  cursor: pointer;
 }
 
 h1 {
@@ -105,4 +111,24 @@ h1 {
 
 .readme.show {
   display: block;
+}
+
+.repo-desc.muted {
+  font-size: 0.9em;
+  color: #6c757d; /* gris clarito */
+  margin: 2px 0 6px 0;
+}
+
+.tags-container {
+  margin: 4px 0;
+}
+
+.tag {
+  display: inline-block;
+  background: #e9ecef;
+  color: black;
+  padding: 2px 6px;
+  margin: 2px;
+  border-radius: 12px;
+  font-size: 0.8em;
 }
