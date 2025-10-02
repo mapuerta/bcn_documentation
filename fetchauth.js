@@ -20,7 +20,7 @@ function showLoginModal() {
       if (!username) return;
 
       try {
-        const res = await fetch(CONFIG.API_BASE_URL + "/login", {
+        const res = await fetch(CONFIG.API_BASE_URL + "/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username })

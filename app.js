@@ -12,7 +12,7 @@ let allRepos = {};
 async function loadSections() {
   try {
     //~ const res = await fetch(CONFIG.API_BASE_URL + "/repos");
-    const res = await fetchWithAuth(CONFIG.API_BASE_URL + "/repos");
+    const res = await fetchWithAuth(CONFIG.API_BASE_URL + "/api/repos");
     if (!res.ok) throw new Error("Error al obtener repositorios");
     allRepos = await res.json();
 
@@ -214,7 +214,10 @@ async function toggleReadme(repoName, branch, container) {
 
   try {
     //~ const res = await fetch(`${CONFIG.API_BASE_URL}/repos/${repoName}/readme?branch=${branch}`);
-    const res = await fetchWithAuth(`${CONFIG.API_BASE_URL}/repos/${repoName}/readme?branch=${branch}`);
+    let url = `${CONFIG.API_BASE_URL}/api/repos/${repoName}/readme?branch=${branch}`
+    console.log(url);
+    
+    const res = await fetchWithAuth(url);
     if (!res.ok) throw new Error("Error al cargar README");
 
     const html = await res.text();
